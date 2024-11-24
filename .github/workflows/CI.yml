@@ -22,7 +22,10 @@ jobs:
             distribution: 'adopt' 
             server-id: github  
             settings-path: ${{ github.workspace }} # location for the settings.xml file 
-           
+
+      # Eliminar caché de Gradle si existe
+      - name: Eliminar caché de Gradle si existe
+        run: rm -rf ~/.gradle/wrapper/dists/gradle-2.1-bin/
       #### BUILDS ###### 
       - uses: gradle/actions/setup-gradle@v3 
         with: 
