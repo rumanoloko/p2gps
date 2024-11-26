@@ -1,47 +1,48 @@
-version: "3" 
-services:# ahora se indican los servicios por el orden en que se quiere que se inicien.  
-#Por ejemplo, mongo debe estar antes de order. 
-#mongo: mismo nombre usado en el run.sh de Order y application.properties. #Se resuelve en una dirección IP. 
-  mongo:  
-    image: tusuarioDocker/p2gps:db 
-    deploy: 
-      replicas: 1 # para escabilidad del servicio.  
-      resources: 
-        limits: 
-          cpus: "0.15" 
-          memory: 200M 
-      restart_policy: 
-        condition: on-failure #reinicar el contenedor si falla 
-    ports: 
-      - "28017:28017" # mapeo el Puerto del contenedor (derecha) con el puerto  del host del servicio 
-      - "27017:27017" 
-    volumes: 
-      - "db-data:/data/db" # para guardar en local los cambios en el contenedor 
-  order: 
-    image: tusuarioDocker/p2gps:order 
-    depends_on: 
-      - "mongo"  #le pasamos al servicio order la IP del servicio mongo 
-    deploy: 
-      replicas: 1 
-      resources: 
-        limits: 
-          cpus: "0.3" 
-          memory: 500M 
-      restart_policy: 
-        condition: on-failure 
-    ports: 
-      - "8080:8080" 
-  web: 
-    image: tusuarioDocker/p2gps:web 
-    deploy: 
-      replicas: 1 
-      resources: 
-        limits: 
-          cpus: "0.25" 
-          memory: 300M 
-      restart_policy: 
-        condition: on-failure 
-    ports: 
-      - "80:8080"   
-volumes:  
-   db-data: 
+version: "3"
+services:
+  mongo:  # nombre del servicio mongo
+    image: rumanoloko/p2gps:db
+    deploy:
+      replicas: 1  # número de réplicas
+      resources:
+        limits:
+          cpus: "0.15"  # límite de CPU
+          memory: 200M  # límite de memoria
+      restart_policy:
+        condition: on-failure  # reiniciar el contenedor en caso de error
+    ports:
+      - "28017:28017"  # mapeo de puertos
+      - "27017:27017"
+    volumes:
+      - "db-data:/data/db"  # volumen persistente para datos de Mongo
+
+  order:  # nombre del servicio order
+    image: rumanoloko/p2gps:order
+    depends_on:
+      - mongo  # orden de inicio, mongo debe estar antes de order
+    deploy:
+      replicas: 1  # número de réplicas
+      resources:
+        limits:
+          cpus: "0.3"  # límite de CPU
+          memory: 500M  # límite de memoria
+      restart_policy:
+        condition: on-failure  # reiniciar el contenedor en caso de error
+    ports:
+      - "8080:8080"  # mapeo de puertos
+
+  web:  # nombre del servicio web
+    image: rumanoloko/p2gps:web
+    deploy:
+      replicas: 1  # número de réplicas
+      resources:
+        limits:
+          cpus: "0.25"  # límite de CPU
+          memory: 300M  # límite de memoria
+      restart_policy:
+        condition: on-failure  # reiniciar el contenedor en caso de error
+    ports:
+      - "80:8080"  # mapeo de puertos
+
+volumes:
+  db-data:  # definición del volumen persistente
